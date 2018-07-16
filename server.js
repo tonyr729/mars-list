@@ -13,7 +13,7 @@ app.set('port', process.env.PORT || 3000);
 app.locals.title = 'Mars List';
 
 app.get('/api/v1/items', (request, response) => {
-
+  
 });
 
 app.get('/api/v1/items/:id', (request, response) => {
