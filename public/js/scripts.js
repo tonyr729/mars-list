@@ -33,7 +33,6 @@ const createItem = async () => {
 
   if ($input.val()) {
     const result = await postItem(itemName)
-    console.log(result)
   } else {
     $(".warning").text("Please insert a name for the item");
   }
@@ -91,10 +90,10 @@ const deleteItem = (event) => {
 
     event.target.closest('div').remove();
   }
-
 }
 
 
 
 $('.button__add').on('click', createItem);
-$('.section__bottom').on('click', markedAsPacked, deleteItem);
+$('.section__bottom').on('click', markedAsPacked);
+$('.section__bottom').on('click', deleteItem);
