@@ -25,7 +25,7 @@ app.get('/api/v1/items', (request, response) => {
 app.post('/api/v1/items', (request, response) => {
   const item = request.body;
   const itemParams = Object.keys(item)
-  const requiredParameter = ['name', 'isPacked']
+  const requiredParams = ['name', 'isPacked']
 
   if (!itemParams === requiredParams) {
     return response
@@ -41,6 +41,18 @@ app.post('/api/v1/items', (request, response) => {
       response.status(500).json({ error });
     });
 });
+
+app.patch('/api/v1/items/:id', (request, response) => {
+  const { item } = request.body
+  const { id } = request.params
+  database('items').where('id', id).update(item, 'id')
+    .then(itemId => {
+      response.status(202).json({ id: itemId[0] })
+    })
+    .catch(error => {
+      response.status(500).json({ error })
+    })
+})
 
 app.delete('/api/v1/items/:id', (request, response) => {
   const { id } = request.params
