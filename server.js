@@ -25,7 +25,7 @@ app.get('/api/v1/items', (request, response) => {
 app.post('/api/v1/items', (request, response) => {
   const item = request.body;
   const itemParams = Object.keys(item)
-  const requiredParameter = ['name', 'isPacked']
+  const requiredParams = ['name', 'isPacked']
 
   if (!itemParams === requiredParams) {
     return response

@@ -1,6 +1,3 @@
-$input = $('.section__top input')[0];
-$addButton = $('.button__add')[0];
-
 $(document).ready(() => {
   loadItems();
 })
@@ -29,10 +26,43 @@ const appendItems = (items) => {
   })
 }
 
-const createItem = () => {
-  
+const createItem = async () => {
+  $input = $('.section__top input');
+  const itemName = $input.val();
+
+  if ($input.val()) {
+    const result = await postItem(itemName)
+    console.log(result)
+  } else {
+    $(".warning").text("Please insert a name for the item");
+  }
+
+  appendItems([{name: itemName, isPacked: false}])
+
+  $input.val('')
+}
+
+const postItem = async (itemName) => {
+  const url = '/api/v1/items';
+  const item = {
+    name: itemName,
+    isPacked: false
+  };
+  try {
+    const response = await fetch(url, {
+      body: JSON.stringify(item),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    });
+    const result = await response.json()
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 
 
-// $addButton.on('click', createItem);
+
+$('.button__add').on('click', createItem);
