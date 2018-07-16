@@ -22,6 +22,7 @@ const appendItems = (items) => {
         <h3>${item.name}</h3>
         <input type="checkbox" id="packed" name="${item.id}" ${item.isPacked ? "checked" : ""}/>
         <label for="packed">Packed</label>
+        <button class="button__delete" id=${item.id}>Delete Item</button>
       </div>`)
   })
 }
@@ -79,13 +80,21 @@ const patchItem= async (id, value) => {
     },
     method: 'PATCH'
   });
-
-  const item = await response.json();
-  console.log(item)
-  
 } 
+
+const deleteItem = (event) => {
+  if (event.target.className === "button__delete") {
+    const id = event.target.id;
+    fetch(`/api/v1/items/${id}`, {
+      method: 'DELETE'
+    });
+
+    event.target.closest('div').remove();
+  }
+
+}
 
 
 
 $('.button__add').on('click', createItem);
-$('.section__bottom').on('click', markedAsPacked);
+$('.section__bottom').on('click', markedAsPacked, deleteItem);
