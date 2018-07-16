@@ -93,4 +93,72 @@ describe('API Routes', () => {
     })
   })
 
+  describe('PATCH /api/v1/items/:id', () => {
+    it('should update a the contents of a specific item', done => {
+      chai.request(server)
+        .get('/api/v1/items')
+        .end((error, response) => {
+          chai.request(server)
+            .patch('/api/v1/items/' + response.body[0].id)
+            .send({
+              item: {
+                isPacked: true
+              }
+            })
+            .end((error, response) => {
+              response.should.have.status(202);
+              response.should.be.json;
+              response.body.should.have.property('id');
+              response.body.id.should.equal(1)
+              done();
+            })
+        })
+    })
+
+    it('should return a response with a status of 500 if incorrect id is provided', done => {
+      chai.request(server)
+        .get('/api/v1/items')
+        .end((error, response) => {
+          chai.request(server)
+            .patch('/api/v1/items/nonsense12315')
+            .send({
+              item: {
+                isPacked: true
+              }
+            })
+            .end((error, response) => {
+              response.should.have.status(500);
+              done();
+            })
+        })
+    })
+  })
+
+  describe('DELETE, api/v1/items/:id', () => {
+    it('should delete a specific item based on parameters', done => {
+      chai.request(server)
+      .get('/api/v1/items')
+      .end((error, response) => {
+        chai.request(server)
+        .delete('/api/v1/items/' + response.body[0].id)
+        .end((error, response) => {
+          response.should.have.status(204);
+          done();
+        });
+      });
+    });
+      
+    it('should return a response with a status of 500 if incorrect id is provided', done => {
+      chai.request(server)
+        .get('/api/v1/items')
+        .end((error, response) => {
+          chai.request(server)
+            .delete('/api/v1/items/notaid@34523')
+            .end((error, response) => {
+              response.should.have.status(500);
+              done();
+            })
+        })
+    })
+  })
 });
