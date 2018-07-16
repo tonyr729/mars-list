@@ -27,19 +27,19 @@ app.post('/api/v1/items', (request, response) => {
   const itemParams = Object.keys(item)
   const requiredParams = ['name', 'isPacked']
 
-  if (!itemParams === requiredParams) {
+  if (itemParams.length === requiredParams.length && itemParams.every((param,i) => param === requiredParams[i])) {
+    database('items').insert(item, 'id')
+      .then(itemID => {
+        response.status(201).json({ id: itemID[0] })
+      })
+      .catch(error => {
+        response.status(500).json({ error });;
+      });
+  } else {
     return response
       .status(422)
-      .send({ error: `Expected format: { name: <String>, isPacked: <Boolean> }. You're missing a "${requiredParameter}" property.` });
-  }
-
-  database('items').insert(item, 'id')
-    .then(itemID => {
-      response.status(201).json({ id: itemID[0] })
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
+      .send({ error: `Expected format: { name: <String>, isPacked: <Boolean> }. You're missing a required property.` });
+  }  
 });
 
 app.patch('/api/v1/items/:id', (request, response) => {

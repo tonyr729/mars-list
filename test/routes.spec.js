@@ -35,7 +35,7 @@ describe('API Routes', () => {
   beforeEach(done => {
     database.migrate.rollback()
       .then(() => {
-        return database.migrate.latest()
+        return database.migrate.latest();
       })
       .then(() => {
         return database.seed.run();
@@ -62,4 +62,35 @@ describe('API Routes', () => {
         });
     });
   });
+
+  describe('POST /api/v1/items', () => {
+    it('should create a new item', done => {
+      chai.request(server)
+        .post('/api/v1/items')
+        .send({
+          name: 'Medical Supplies',
+          isPacked: false
+        })
+        .end((error, response) => {
+          response.should.have.status(201);
+          response.should.be.json;
+          response.body.should.be.a('object');        
+          (response.body).should.have.property('id');
+          done();
+        })
+    })
+
+    it('should return a response with status 422 if there is a missing parameter', done => {
+      chai.request(server)
+        .post('/api/v1/items')
+        .send({
+          name: 'Snacks'
+        })
+        .end((error, response) => {
+          response.should.have.status(422);
+          done();
+        })
+    })
+  })
+
 });
