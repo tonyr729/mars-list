@@ -9,7 +9,7 @@ const loadItems = async () => {
 
 const fetchItems = async () => {
   const response = await fetch('/api/v1/items');
-  const items = await response.json()
+  const items = await response.json();
   
   return items;
 }
@@ -20,7 +20,7 @@ const appendItems = (items) => {
     $cardArea.append(
       `<div class="div__card">
         <h3>${item.name}</h3>
-        <input type="radio" id="packed"/>
+        <input type="checkbox" id="packed" name="${item.id}" ${item.isPacked ? "checked" : ""}/>
         <label for="packed">Packed</label>
       </div>`)
   })
@@ -62,7 +62,30 @@ const postItem = async (itemName) => {
   }
 }
 
+const markedAsPacked = (event) => {
+  if (event.target.id === "packed") { 
+    const id = event.target.name;
+    const value = event.target.checked;
+
+    patchItem(id, value)
+  }
+}
+
+const patchItem= async (id, value) => {
+  const response = await fetch(`/api/v1/items/${id}`, {
+    body: JSON.stringify({item: {isPacked: value}}),
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'PATCH'
+  });
+
+  const item = await response.json();
+  console.log(item)
+  
+} 
 
 
 
 $('.button__add').on('click', createItem);
+$('.section__bottom').on('click', markedAsPacked);

@@ -42,6 +42,18 @@ app.post('/api/v1/items', (request, response) => {
     });
 });
 
+app.patch('/api/v1/items/:id', (request, response) => {
+  const { item } = request.body
+  const { id } = request.params
+  database('items').where('id', id).update(item, 'id')
+    .then(itemId => {
+      response.status(202).json({ id: itemId[0] })
+    })
+    .catch(error => {
+      response.status(500).json({ error })
+    })
+})
+
 app.delete('/api/v1/items/:id', (request, response) => {
   const { id } = request.params
   database('items').where('id', id).del()
