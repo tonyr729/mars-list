@@ -30,3 +30,36 @@ describe('CLIENT routes', () => {
       })
   });
 });
+
+describe('API Routes', () => {
+  beforeEach(done => {
+    database.migrate.rollback()
+      .then(() => {
+        return database.migrate.latest()
+      })
+      .then(() => {
+        return database.seed.run();
+      })
+      .then(() => {
+        done();
+      });
+  });
+
+  describe('GET /api/v1/items', () => {
+    it('should return all of the items', done => {
+      chai.request(server)
+        .get('/api/v1/items')
+        .end((error, response) => {
+          response.should.have.status(200);
+          response.should.be.json;
+          response.body.should.be.a('array');
+          response.body.length.should.equal(3);
+          (response.body[0]).should.have.property('name');
+          (response.body[0].name).should.equal('Oxygenator');
+          (response.body[0]).should.have.property('isPacked');
+          (response.body[0].isPacked).should.equal(false);
+          done();
+        });
+    });
+  });
+});
