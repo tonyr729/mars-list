@@ -45,23 +45,32 @@ app.post('/api/v1/items', (request, response) => {
 app.patch('/api/v1/items/:id', (request, response) => {
   const { item } = request.body
   const { id } = request.params
+
   database('items').where('id', id).update(item, 'id')
     .then(itemId => {
-      response.status(202).json({ id: itemId[0] })
+      if(!itemId.length) {
+        return response.status(404).send({message: 'Incorrect or non-existant id provided.'});
+      }
+
+      return response.status(202).json({ id: itemId[0] })
     })
     .catch(error => {
-      response.status(500).json({ error })
+      return response.status(500).json({ error })
     })
 })
 
 app.delete('/api/v1/items/:id', (request, response) => {
   const { id } = request.params
   database('items').where('id', id).del()
-    .then(() => {
-      response.sendStatus(204)
+    .then(itemId => {
+      if(!itemId) {
+        return response.status(404).send({message: 'Incorrect or non-existant id provided.'});
+      }
+
+      return response.sendStatus(204)
     })
     .catch(error => {
-      response.status(500).json({ error });
+      return response.status(500).json({ error });
     });
 });
 

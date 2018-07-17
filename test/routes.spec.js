@@ -115,19 +115,21 @@ describe('API Routes', () => {
         })
     })
 
-    it('should return a response with a status of 500 if incorrect id is provided', done => {
+    it('should return a response with a status of 404 if incorrect id is provided', done => {
       chai.request(server)
         .get('/api/v1/items')
         .end((error, response) => {
           chai.request(server)
-            .patch('/api/v1/items/nonsense12315')
+            .patch('/api/v1/items/12315')
             .send({
               item: {
                 isPacked: true
               }
             })
             .end((error, response) => {
-              response.should.have.status(500);
+              response.should.have.status(404);
+              response.body.should.have.property('message');
+              (response.body.message).should.equal('Incorrect or non-existant id provided.')
               done();
             })
         })
@@ -148,14 +150,16 @@ describe('API Routes', () => {
       });
     });
       
-    it('should return a response with a status of 500 if incorrect id is provided', done => {
+    it.only('should return a response with a status of 404 if incorrect id is provided', done => {
       chai.request(server)
         .get('/api/v1/items')
         .end((error, response) => {
           chai.request(server)
-            .delete('/api/v1/items/notaid@34523')
+            .delete('/api/v1/items/34523')
             .end((error, response) => {
-              response.should.have.status(500);
+              response.should.have.status(404);
+              response.body.should.have.property('message');
+              (response.body.message).should.equal('Incorrect or non-existant id provided.')
               done();
             })
         })
